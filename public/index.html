@@ -1,0 +1,175 @@
+<!-- File: public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Sign-In API -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <div class="container">
+        <div class="forms-container">
+            <!-- LOGIN FORM -->
+            <div class="form-section" id="login-section">
+                <h2>Login</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <div class="form-links">
+                        <a href="#" id="forgot-password-link">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                <div class="social-login">
+                    <p>Or login with</p>
+                    <div class="social-buttons">
+                        <div id="google-signin-button"></div>
+                        <button id="facebook-login" class="btn btn-facebook">
+                            <i class="fab fa-facebook-f"></i> Facebook
+                        </button>
+                    </div>
+                </div>
+                <div class="form-switcher">
+                    <p>Don't have an account? <a href="#" id="register-link">Register</a></p>
+                </div>
+            </div>
+
+            <!-- REGISTER FORM -->
+            <div class="form-section hidden" id="register-section">
+                <h2>Create Account</h2>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="register-name">Full Name</label>
+                        <input type="text" id="register-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email</label>
+                        <input type="email" id="register-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-phone">Phone (optional)</label>
+                        <input type="tel" id="register-phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password</label>
+                        <input type="password" id="register-password" required>
+                        <small class="helper-text">Minimum 8 characters</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm-password">Confirm Password</label>
+                        <input type="password" id="register-confirm-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </form>
+                <div class="social-login">
+                    <p>Or register with</p>
+                    <div class="social-buttons">
+                        <div id="google-signup-button"></div>
+                        <button id="facebook-register" class="btn btn-facebook">
+                            <i class="fab fa-facebook-f"></i> Facebook
+                        </button>
+                    </div>
+                </div>
+                <div class="form-switcher">
+                    <p>Already have an account? <a href="#" id="login-link">Login</a></p>
+                </div>
+            </div>
+
+            <!-- FORGOT PASSWORD FORM -->
+            <div class="form-section hidden" id="forgot-password-section">
+                <h2>Forgot Password</h2>
+                <p>Enter your email address and we'll send you a link to reset your password.</p>
+                <form id="forgot-password-form">
+                    <div class="form-group">
+                        <label for="forgot-email">Email</label>
+                        <input type="email" id="forgot-email" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Reset Link</button>
+                </form>
+                <div class="form-switcher">
+                    <p><a href="#" id="back-to-login">Back to Login</a></p>
+                </div>
+            </div>
+
+            <!-- RESET PASSWORD FORM -->
+            <div class="form-section hidden" id="reset-password-section">
+                <h2>Reset Password</h2>
+                <form id="reset-password-form">
+                    <div class="form-group">
+                        <label for="new-password">New Password</label>
+                        <input type="password" id="new-password" required>
+                        <small class="helper-text">Minimum 8 characters</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-new-password">Confirm New Password</label>
+                        <input type="password" id="confirm-new-password" required>
+                    </div>
+                    <input type="hidden" id="reset-token">
+                    <button type="submit" class="btn btn-primary">Reset Password</button>
+                </form>
+            </div>
+
+            <!-- EMAIL VERIFICATION -->
+            <div class="form-section hidden" id="verify-email-section">
+                <h2>Verify Email</h2>
+                <p>Please check your email for a verification link.</p>
+                <div id="email-verification-message"></div>
+                <div class="form-switcher">
+                    <p><a href="#" class="back-to-login">Back to Login</a></p>
+                </div>
+            </div>
+
+            <!-- PHONE VERIFICATION -->
+            <div class="form-section hidden" id="verify-phone-section">
+                <h2>Verify Phone Number</h2>
+                <p>We've sent a verification code to your phone. Please enter it below.</p>
+                <form id="verify-phone-form">
+                    <div class="form-group">
+                        <label for="verification-code">Verification Code</label>
+                        <input type="text" id="verification-code" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Verify Phone</button>
+                </form>
+                <div class="form-links">
+                    <a href="#" id="resend-code">Resend Code</a>
+                </div>
+            </div>
+
+            <!-- DASHBOARD AREA -->
+            <div class="form-section hidden" id="dashboard-section">
+                <h2>Welcome <span id="user-name"></span></h2>
+                <div class="user-info">
+                    <p>Email: <span id="user-email"></span> 
+                        <span id="email-verified-badge" class="badge badge-success">Verified</span>
+                        <span id="email-unverified-badge" class="badge badge-warning">Unverified</span>
+                    </p>
+                    <p>Phone: <span id="user-phone"></span>
+                        <span id="phone-verified-badge" class="badge badge-success">Verified</span>
+                        <span id="phone-unverified-badge" class="badge badge-warning">Unverified</span>
+                        <button id="verify-phone-button" class="btn btn-sm">Verify</button>
+                    </p>
+                </div>
+                <div class="actions">
+                    <button id="logout-button" class="btn btn-danger">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="notification" class="notification"></div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
