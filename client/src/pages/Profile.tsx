@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/Api'; // Import the custom Axios instance
 import { API_BASE_URL } from '../utils/Api';
 
 interface User {
@@ -14,9 +14,16 @@ const Profile: React.FC = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    axios.get(`${API_BASE_URL}/profile`)
-      .then((res) => setUser(res.data.user))
-      .catch((err) => setError('Failed to fetch profile'));
+    const fetchProfile = async () => {
+      try {
+        const response = await api.get<{ user: User }>(`${API_BASE_URL}/profile`);
+        setUser(response.data.user);
+      } catch (err) {
+        setError('Failed to fetch profile');
+      }
+    };
+
+    fetchProfile();
   }, []);
 
   if (!user) return <div>Loading...</div>;
