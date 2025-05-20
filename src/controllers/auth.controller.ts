@@ -10,7 +10,7 @@ import {
   generateVerificationCode
 } from '../services/token.service';
 import { sendVerificationEmail, sendPasswordResetEmail } from '../services/email.service';
-import { sendVerificationSMS } from '../services/sms.service';
+import { verifyFirebaseToken, getPhoneNumberFromFirebaseUid } from '../services/sms.service';
 import { AuthRequest } from '../middlewares/auth.middleware';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -199,47 +199,45 @@ export const sendPhoneVerification = async (req: AuthRequest, res: Response) => 
       return res.status(400).json({ message: 'Phone number not found' });
     }
     
-    // Generate verification code
-    const verificationCode = generateVerificationCode();
-    
-    // Update user
-    user.phoneVerificationCode = verificationCode;
-    user.phoneVerificationExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-    await user.save();
-    
-    // Send verification SMS
-    await sendVerificationSMS(user.phone, verificationCode);
-    
-    res.json({ message: 'Verification code sent to your phone' });
+    // We don't need to generate codes or store verification data anymore
+    // Just return success - actual verification happens client-side with Firebase
+    res.json({ 
+      message: 'Please complete phone verification using the Firebase verification process',
+      phone: user.phone // Send back the phone so client can pre-fill it
+    });
   } catch (error) {
-    console.error('Phone verification error:', error);
-    res.status(500).json({ message: 'Server error during phone verification' });
+    console.error('Phone verification initiation error:', error);
+    res.status(500).json({ message: 'Server error during phone verification initiation' });
   }
 };
 
 export const verifyPhone = async (req: AuthRequest, res: Response) => {
   try {
-    const { code } = req.body;
+    const { firebaseToken } = req.body;
     const user = req.user;
     
-    // Check verification code
-    if (
-      !user.phoneVerificationCode ||
-      user.phoneVerificationCode !== code ||
-      new Date() > user.phoneVerificationExpires
-    ) {
-      return res.status(400).json({ message: 'Invalid or expired verification code' });
+    // Verify the Firebase token
+    const decodedToken = await verifyFirebaseToken(firebaseToken);
+    
+    // Get phone number from Firebase
+    const phoneNumber = decodedToken.phone_number;
+    
+    if (!phoneNumber) {
+      return res.status(400).json({ message: 'Phone number not found in Firebase token' });
     }
     
-    // Update user
+    // Update user with verified phone and link Firebase UID
+    user.phone = phoneNumber;
     user.isPhoneVerified = true;
-    user.phoneVerificationCode = undefined;
-    user.phoneVerificationExpires = undefined;
+    user.firebaseUid = decodedToken.uid;
     await user.save();
     
-    res.json({ message: 'Phone verified successfully' });
+    res.json({ 
+      message: 'Phone verified successfully',
+      phone: phoneNumber
+    });
   } catch (error) {
-    console.error('Phone verification error:', error);
+    console.error('Phone verification completion error:', error);
     res.status(500).json({ message: 'Server error during phone verification' });
   }
 };

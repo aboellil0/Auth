@@ -14,6 +14,7 @@ export interface IUser extends Document {
   emailVerificationExpires?: Date;
   phoneVerificationCode?: string;
   phoneVerificationExpires?: Date;
+  firebaseUid?: string; 
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
   createdAt: Date;
@@ -62,6 +63,10 @@ const UserSchema = new Schema<IUser>(
     isPhoneVerified: {
       type: Boolean,
       default: false,
+    },
+    firebaseUid: {
+      type: String,
+      index: { unique: true, sparse: true },
     },
     emailVerificationToken: String,
     emailVerificationExpires: Date,

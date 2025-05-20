@@ -1,27 +1,41 @@
-// File: src/services/sms.service.ts
-import twilio from 'twilio';
+// src/services/firebase.service.ts
+import admin from 'firebase-admin';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
-
-// Initialize Twilio client
-const client = accountSid && authToken 
-  ? twilio(accountSid, authToken)
-  : null;
-
-export const sendVerificationSMS = async (phoneNumber: string, code: string): Promise<void> => {
-  if (!client || !twilioPhoneNumber) {
-    console.log(`SMS verification code for ${phoneNumber}: ${code}`);
-    return;
+// Initialize Firebase Admin SDK
+if (!admin.apps.length) {
+  try {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      }),
+    });
+    console.log('Firebase Admin SDK initialized successfully');
+  } catch (error) {
+    console.error('Firebase Admin initialization error:', error);
   }
-  
-  await client.messages.create({
-    body: `Your verification code is: ${code}`,
-    from: twilioPhoneNumber,
-    to: phoneNumber
-  });
+}
+
+export const verifyFirebaseToken = async (firebaseToken: string): Promise<admin.auth.DecodedIdToken> => {
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(firebaseToken);
+    return decodedToken;
+  } catch (error) {
+    console.error('Firebase token verification error:', error);
+    throw new Error('Invalid Firebase token');
+  }
+};
+
+export const getPhoneNumberFromFirebaseUid = async (uid: string): Promise<string | null> => {
+  try {
+    const userRecord = await admin.auth().getUser(uid);
+    return userRecord.phoneNumber || null;
+  } catch (error) {
+    console.error('Error fetching user from Firebase:', error);
+    return null;
+  }
 };
