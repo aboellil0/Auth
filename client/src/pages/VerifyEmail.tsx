@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { API_BASE_URL } from '../utils/api';
+import { API_BASE_URL } from '../utils/Api';
 
 const VerifyEmail: React.FC = () => {
   const [token, setToken] = useState('');

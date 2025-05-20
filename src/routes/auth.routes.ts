@@ -16,7 +16,7 @@ router.post('/google', authController.googleLogin);
 router.post('/facebook', authController.facebookLogin);
 
 // Protected routes
-router.get('/me', isAuthenticated, authController.getMe);
+router.get('/profile', isAuthenticated, authController.getMe);
 router.post('/verify-phone/send', isAuthenticated, authController.sendPhoneVerification);
 router.post('/verify-phone', isAuthenticated, authController.verifyPhone);
 

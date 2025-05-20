@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { API_BASE_URL } from '../utils/api';
+import { API_BASE_URL } from '../utils/Api';
 
 const Register: React.FC = () => {
-  const [formData, setFormData] = useState({ email: '', phone: '', password: '' });
+  const [formData, setFormData] = useState({name:'' ,email: '', phone: '', password: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
@@ -28,6 +28,16 @@ const Register: React.FC = () => {
       {error && <p className="text-red-500 mb-4">{error}</p>}
       {success && <p className="text-green-500 mb-4">{success}</p>}
       <form onSubmit={handleSubmit}>
+      <div className="mb-4">
+          <label className="block text-gray-700">Name</label>
+          <input
+            type="text"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            className="w-full p-2 border rounded"
+            required
+          />
+        </div>
         <div className="mb-4">
           <label className="block text-gray-700">Email</label>
           <input
