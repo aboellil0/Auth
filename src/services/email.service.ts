@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 });
 
 export const sendVerificationEmail = async (email: string, token: string): Promise<void> => {
-  const verificationUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${token}`;
+  const verificationUrl = `${process.env.FRONTEND_URL as string}/verify-email?token=${token}`;
   
   const mailOptions = {
     from: process.env.EMAIL_FROM || '"Auth System" <auth@example.com>',
@@ -33,7 +33,7 @@ export const sendVerificationEmail = async (email: string, token: string): Promi
 };
 
 export const sendPasswordResetEmail = async (email: string, token: string): Promise<void> => {
-  const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${token}`;
+  const resetUrl = `${process.env.FRONTEND_URL as string}/reset-password?token=${token}`;
   
   const mailOptions = {
     from: process.env.EMAIL_FROM || '"Auth System" <auth@example.com>',
