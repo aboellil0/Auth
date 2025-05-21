@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { API_BASE_URL } from '../utils/Api';
+import api, { API_BASE_URL } from '../utils/Api';
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({name:'' ,email: '', phone: '', password: '' });
@@ -14,7 +13,7 @@ const Register: React.FC = () => {
     setError('');
     setSuccess('');
     try {
-      await axios.post(`${API_BASE_URL}/register`, formData);
+      await api.post(`${API_BASE_URL}/register`, formData);
       setSuccess('Registration successful! Please verify your email and phone.');
       setTimeout(() => navigate('/verify-email'), 2000);
     } catch (err: any) {

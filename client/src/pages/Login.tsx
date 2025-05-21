@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { API_BASE_URL } from '../utils/Api';
+import api, { API_BASE_URL } from '../utils/Api';
 
 interface LoginResponse {
     accessToken: string;
@@ -20,7 +20,7 @@ const Login: React.FC = () => {
     setError('');
     setSuccess('');
     try {
-      var response = await axios.post<LoginResponse>(`${API_BASE_URL}/login`, formData);
+      var response = await api.post<LoginResponse>(`${API_BASE_URL}/login`, formData);
       localStorage.setItem('accessToken', response.data.accessToken);
       setSuccess('Login successful!');
       setTimeout(() => navigate('/profile'), 2000);

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { API_BASE_URL } from '../utils/Api';
+import api, { API_BASE_URL } from '../utils/Api';
 
 const VerifyEmail: React.FC = () => {
   const [token, setToken] = useState('');
@@ -21,7 +21,7 @@ const VerifyEmail: React.FC = () => {
     setError('');
     setSuccess('');
     try {
-      await axios.post(`${API_BASE_URL}/verify-email`, { token });
+      await api.post(`${API_BASE_URL}/verify-email`, { token });
       setSuccess('Email verified successfully!');
       setTimeout(() => navigate('/verify-phone'), 2000);
     } catch (err: any) {

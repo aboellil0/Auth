@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
-import { API_BASE_URL } from '../utils/Api';
+import api, { API_BASE_URL } from '../utils/Api';
 
 const ResetPassword: React.FC = () => {
   const [formData, setFormData] = useState({ token: '', password: '' });
@@ -21,7 +20,7 @@ const ResetPassword: React.FC = () => {
     setError('');
     setSuccess('');
     try {
-      await axios.post(`${API_BASE_URL}/reset-password`, formData);
+      await api.post(`${API_BASE_URL}/reset-password`, formData);
       setSuccess('Password reset successful!');
       setTimeout(() => navigate('/login'), 2000);
     } catch (err: any) {
