@@ -70,7 +70,7 @@ api.interceptors.response.use(
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
     
     // Only attempt to refresh the token if we get a 401 and haven't tried yet
-    if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/auth/refresh-token') {
+    if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/refresh-token') {
       console.log('Token expired, attempting refresh...');
       
       if (isRefreshing) {
@@ -92,7 +92,7 @@ api.interceptors.response.use(
       try {
         // Make sure we're using the right endpoint for refresh
         const { data } = await axios.post<RefreshTokenResponse>(
-          `${API_BASE_URL}/auth/refresh-token`, 
+          `${API_BASE_URL}/refresh-token`, 
           {}, 
           { withCredentials: true }
         );

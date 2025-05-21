@@ -21,8 +21,7 @@ const Profile: React.FC = () => {
       try {
         // Check if user is authenticated first
         if (!isAuthenticated()) {
-          setError('You must be logged in to view this page');
-          setLoading(false);
+          window.location.href = '/login';
           return;
         }
 

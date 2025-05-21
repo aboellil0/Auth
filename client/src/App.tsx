@@ -9,6 +9,10 @@ import Login from './pages/Login';
 import ForgotPassword from './pages/ForgetPassword';
 import ResetPassword from './pages/ResetPassword';
 import Profile from './pages/Profile';
+import { initTokenRefreshScheduler } from './utils/tokenRefresh';
+
+
+initTokenRefreshScheduler(240000);
 
 const App: React.FC = () => {
   return (

@@ -30,7 +30,7 @@ export const generateRefreshToken = (user: IUser, tokenVersion = 0): string => {
     tokenVersion
   };
   
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: '15m' });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
 };
 
 export const verifyToken = (token: string): TokenPayload => {

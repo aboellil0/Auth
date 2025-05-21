@@ -1,4 +1,5 @@
 // authUtils.ts - Helper functions for authentication
+import api, { API_BASE_URL } from './Api';
 
 /**
  * Get the access token from localStorage
@@ -26,7 +27,7 @@ export const removeAccessToken = (): void => {
  */
 export const isAuthenticated = (): boolean => {
     const token = getAccessToken();
-    return !!token;
+    return !!token && !isTokenExpired(token);
 };
 
 /**
@@ -66,4 +67,50 @@ export const isTokenExpired = (token: string): boolean => {
     } catch (e) {
         return true;
     }
+};
+
+/**
+ * Handles logout - clears token and redirects to login
+ */
+export const logout = (): void => {
+    removeAccessToken();
+    window.location.href = '/login';
+};
+
+/**
+ * Attempt to refresh the token when needed
+ * Returns a promise that resolves to the new token if successful
+ */
+export const refreshToken = async (): Promise<string | null> => {
+    try {
+        const response = await api.post<{ accessToken: string }>('/auth/refresh-token', {});
+        const newToken = response.data.accessToken;
+        saveAccessToken(newToken);
+        return newToken;
+    } catch (error) {
+        console.error('Failed to refresh token:', error);
+        logout();
+        return null;
+    }
+};
+
+/**
+ * Check if token needs to be refreshed and refresh if needed
+ * This can be called before making authenticated requests
+ */
+export const checkAndRefreshToken = async (): Promise<boolean> => {
+    const token = getAccessToken();
+    
+    if (!token) {
+        return false;
+    }
+    
+    // If token is expired or will expire in the next 5 minutes, refresh it
+    if (isTokenExpired(token)) {
+        const newToken = await refreshToken();
+        return !!newToken;
+    }
+    
+    // Token is still valid
+    return true;
 };
