@@ -20,7 +20,7 @@ const Register: React.FC = () => {
   const initializeGoogleSignIn = () => {
     if (window.google) {
       window.google.accounts.id.initialize({
-        client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID', // Replace with your actual client ID
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
         callback: handleCredentialResponse,
         auto_select: false,
         cancel_on_tap_outside: true,
@@ -47,15 +47,15 @@ const Register: React.FC = () => {
     setSuccess('');
     
     try {
-      const result = await api.post(`${API_BASE_URL}/auth/google-login`, {
+      const result = await api.post(`${API_BASE_URL}/google`, {
         idToken: response.credential,
       });
 
       if (result.data) {
         // Store access token (you might want to use a more secure method)
         localStorage.setItem('accessToken', result.data.accessToken);
-        setSuccess('Google registration/login successful!');
-        setTimeout(() => navigate('/dashboard'), 2000); // Navigate to dashboard or appropriate page
+        setSuccess('Google registration successful!');
+        setTimeout(() => navigate('/profile'), 2000); // Navigate to dashboard or appropriate page
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Google authentication failed');
