@@ -1,6 +1,7 @@
 // src/services/firebase.service.ts
 import admin from 'firebase-admin';
 import dotenv from 'dotenv';
+import axios from 'axios';
 
 dotenv.config();
 
@@ -20,6 +21,10 @@ if (!admin.apps.length) {
   }
 }
 
+// WhatsApp API configuration
+const WHATSAPP_API_URL = process.env.WHATSAPP_API_URL;
+const WHATSAPP_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN;
+
 export const verifyFirebaseToken = async (firebaseToken: string): Promise<admin.auth.DecodedIdToken> => {
   try {
     const decodedToken = await admin.auth().verifyIdToken(firebaseToken);
@@ -37,5 +42,50 @@ export const getPhoneNumberFromFirebaseUid = async (uid: string): Promise<string
   } catch (error) {
     console.error('Error fetching user from Firebase:', error);
     return null;
+  }
+};
+
+export const sendWhatsAppVerificationCode = async (phoneNumber: string, code: string): Promise<boolean> => {
+  try {
+    if (!WHATSAPP_API_URL || !WHATSAPP_ACCESS_TOKEN) {
+      throw new Error('WhatsApp API configuration missing');
+    }
+
+    const response = await axios.post(
+      WHATSAPP_API_URL,
+      {
+        messaging_product: 'whatsapp',
+        to: phoneNumber,
+        type: 'template',
+        template: {
+          name: 'verification_code',
+          language: {
+            code: 'en'
+          },
+          components: [
+            {
+              type: 'body',
+              parameters: [
+                {
+                  type: 'text',
+                  text: code
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    return response.status === 200;
+  } catch (error) {
+    console.error('WhatsApp message sending error:', error);
+    return false;
   }
 };
