@@ -21,6 +21,7 @@ if (!admin.apps.length) {
   }
 }
 
+// just for example, you can use a different service for WhatsApp
 // WhatsApp API configuration
 const WHATSAPP_API_URL = process.env.WHATSAPP_API_URL;
 const WHATSAPP_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN;
