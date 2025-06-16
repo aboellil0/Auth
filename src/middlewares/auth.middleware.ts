@@ -34,3 +34,4 @@ export const isVerified = (req: AuthRequest, res: Response, next: NextFunction) 
   }
   next();
 };
+
